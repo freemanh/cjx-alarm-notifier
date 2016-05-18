@@ -1,9 +1,8 @@
 #!python2
 # coding: utf-8
-import urllib, calendar, md5, mysql.connector, beanstalkc, json, time
+import urllib, calendar, md5, mysql.connector, beanstalkc, json, time, yaml
 from datetime import datetime
 from dateutil import parser
-
 
 def sendSMS(content, tele):
     timestamp = calendar.timegm(datetime.utcnow().timetuple())
@@ -24,7 +23,11 @@ def sendSMS(content, tele):
 
 def poll():
     print 'Start watching...'
-    beanstalk = beanstalkc.Connection(host='192.168.99.100')
+
+    cfg = yaml.load(file('cfg.yml', 'r'))
+    print cfg
+
+    beanstalk = beanstalkc.Connection(host=cfg['host.beanstalkd'])
     for tube in ['alarm.poweroff', 'alarm.reading1', 'alarm.reading2']:
         beanstalk.watch(tube)
 
@@ -60,20 +63,23 @@ def poll():
     beanstalk.close()
 
 def addPoweroffJob():
-    bt = beanstalkc.Connection(host='192.168.99.100')
+    cfg = yaml.load(file('cfg.yml', 'r'))
+    bt = beanstalkc.Connection(host=cfg['host.beanstalkd'])
     bt.use('alarm.poweroff')
     bt.put(json.dumps({'device':'test', 'mobile': '15308039727', 'addedTime': '2016-05-17T23:25:00+08:00'}))
     bt.close()
 
 def addReadingJob():
-    bt = beanstalkc.Connection(host='192.168.99.100')
+    cfg = yaml.load(file('cfg.yml', 'r'))
+    bt = beanstalkc.Connection(host=cfg['host.beanstalkd'])
     #bt.use('alarm.reading1')
     bt.use('alarm.reading2')
     bt.put(json.dumps({'sensor':'test', 'mobile': '15308039727', 'reading':10.0, 'min': 15.0, 'max': 20.0, 'addedTime': '2016-05-17T23:25:00+08:00'}))
     bt.close()
 
 def deleteJob():
-    bt = beanstalkc.Connection(host='192.168.99.100')
+    cfg = yaml.load(file('cfg.yml', 'r'))
+    bt = beanstalkc.Connection(host=cfg['host.beanstalkd'])
     bt.watch('alarm.reading2')
     job = bt.reserve(5)
     if job is not None:

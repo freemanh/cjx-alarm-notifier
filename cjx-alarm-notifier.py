@@ -1,6 +1,6 @@
 #!python2
 # coding: utf-8
-import urllib, calendar, md5, mysql.connector, beanstalkc, json, time, yaml
+import urllib, calendar, md5, beanstalkc, json, time, yaml
 from datetime import datetime
 from dateutil import parser
 

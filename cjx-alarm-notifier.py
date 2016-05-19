@@ -36,7 +36,7 @@ def poll():
         if job is None:
             continue
 
-        print 'message body:{!s}'.format(body).encode('utf-8')
+        print 'message body:{!s}'.format(job.body).encode('utf-8')
         body = json.loads(job.body)
 
         addedTime = parser.parse(body['addedTime'])

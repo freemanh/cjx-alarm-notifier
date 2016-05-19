@@ -36,7 +36,7 @@ def poll():
         if job is None:
             continue
 
-        print u'message body:{!s}'.format(job.body).encode('utf-8')
+        print u'message body:{!s}'.format(job.body.encode('utf-8'))
         body = json.loads(job.body)
 
         addedTime = parser.parse(body['addedTime'])
@@ -67,7 +67,7 @@ def addPoweroffJob():
     cfg = yaml.load(file('cfg.yml', 'r'))
     bt = beanstalkc.Connection(host=cfg['host.beanstalkd'])
     bt.use('alarm.poweroff')
-    bt.put(json.dumps({'device':'test', 'mobile': '15308039727', 'addedTime': '2016-05-17T23:25:00+08:00'}))
+    bt.put(json.dumps({u'device':'中文设备', 'mobile': '15308039727', 'addedTime': '2016-05-17T23:25:00+08:00'}))
     bt.close()
 
 def addReadingJob():

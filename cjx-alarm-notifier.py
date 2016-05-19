@@ -38,6 +38,8 @@ def poll():
 
         body = json.loads(job.body)
 
+        print 'message body:{!s}'.format(body).encode('utf-8')
+
         addedTime = parser.parse(body['addedTime'])
 
         tube = job.stats()['tube']
